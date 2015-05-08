@@ -1,6 +1,5 @@
-var catPicSection = document.getElementById("selectedCat");
-var catList = document.getElementById("catList");
-var CatClick = {
+
+var data = {
     "cats": 
         [
             {
@@ -32,49 +31,104 @@ var CatClick = {
 };
 
 
-
+var controller = {
+    selectedCatIndex: 0,
     
-for(var i = 0; i < CatClick.cats.length; i++) {
-    var cat = CatClick.cats[i];
+    init: function() {
+        // init the views
+        catListView.init();
+        catPicView.init();
+        catListView.render(data.cats);
+        catPicView.render();
+    },
     
-    // Fill catListSection with line items
-    if(i === 0) {
-        catList.innerHTML += "<li id='selected' onclick=catSelected(" + i + ")>" + cat.name + "</li>";
-    } else {
-        catList.innerHTML += "<li onclick=catSelected(" + i + ")>" + cat.name + "</li>";
+    getCats: function() {
+        return data.cats;
+    },
+    
+    selectCat: function(catIndex) {
+        controller.selectedCatIndex = catIndex;
+        catListView.render(data.cats);
+        catPicView.render();
+    }, 
+    
+    getSelectedCat: function() {
+        return data.cats[this.selectedCatIndex];
+    },
+    
+    handleImageClick: function() {
+        
+        // Note how this.selectedCatIndex will be undefined since this
+        // no longer refers to controller/self
+        data.cats[controller.selectedCatIndex].clicks += 1;
+        catPicView.render();
     }
-    
-    /*
-    catPicSection.innerHTML += "<p>" + cat.name + "</p>";
-    catPicSection.innerHTML += "<img src='" + cat.img + "' onclick=catClicked(" + i + ") class='mainCatImage'>";
-    catPicSection.innerHTML += "<p>Click count: <span id='clickCount'>" + cat.clicks + "</span></p>";
-    */
-
 }
 
 
-function catClicked(index) {
-    CatClick.cats[index].clicks += 1;
-    // There is only one span tag at any time so we don't use index here
-    document.getElementsByTagName("span")[0].innerHTML = CatClick.cats[index].clicks;
-}
+var catListView = {
+    domCatList : document.getElementById("catList"),
 
-catSelected(0);
+    init: function() {
 
-function catSelected(index) {
-    var cat = CatClick.cats[index];
-    var list = document.getElementsByTagName("li");
-    for(var i = 0; i < list.length; i++) {
-        if(i === index) {
-            console.log("i is equal to index");
-            list[i].setAttribute("id", "selected");
-        } else {
-            list[i].setAttribute("id", "");
+        this.domCatListContent = "";
+        
+        // get the list of cat names
+        var cats = controller.getCats();
+        
+        // bind each item to an eventHandler to handle clicks
+        for(var i = 0; i < cats.length; i++) {
+            var liElem = window.document.createElement("li");
+            liElem.textContent = cats[i].name;
+            
+            var numCopy = i;
+            liElem.addEventListener("click", (function(numCopy) {
+                return function() {
+                    controller.selectCat(numCopy);
+                }
+            }) (i));
+            
+            this.domCatList.appendChild(liElem);
         }
-    }
-    //list[index].setAttribute("id", "selected");
-    catPicSection.innerHTML = "<p>" + cat.name + "</p>";
-    catPicSection.innerHTML += "<img src='" + cat.img + "' onclick=catClicked(" + index + ") class='mainCatImage'>";
-    catPicSection.innerHTML += "<p>Click count: <span id='clickCount'>" + cat.clicks + "</span></p>";
 
+    },
+    
+    render: function(cats) {
+        // first clear all selected attributes
+        var catLiElems = window.document.getElementsByTagName("li");
+        for(var i = 0; i < catLiElems.length; i++) {
+            if(i == controller.selectedCatIndex) {
+                catLiElems[i].setAttribute("id", "selected");
+            } else {
+                catLiElems[i].removeAttribute("id");
+            }
+        }
+            
+    }
+    
 }
+
+
+var catPicView = {
+    catPicElem: window.document.getElementById("selectedCatImage"),
+    catNameElem: window.document.getElementById("catName"),
+    catCountElem : window.document.getElementById("clickCount"),
+    
+    init: function() {
+        // When we click on a cat pic, have controller update clicks for currently selected cat
+        this.catPicElem.addEventListener("click", controller.handleImageClick, false);
+    },
+    
+    render: function() {
+         
+        var cat = controller.getSelectedCat();
+        
+        // Add data to existing html elements
+        this.catPicElem.setAttribute("src", cat.img);
+        this.catNameElem.textContent = cat.name;
+        this.catCountElem.textContent = cat.clicks;
+ 
+    }
+}
+
+controller.init();

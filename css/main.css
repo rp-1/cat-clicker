@@ -46,11 +46,13 @@ header img {
 
 #selectedCat {
     width: 90%;
-    background-color: azure;
     margin: 0 auto;
 }
     
-
+#selectedCatImage {
+    display: block;
+    margin: 0 auto;
+}
 #catListSection {
     width: 40%;
     margin: 10px;
@@ -60,22 +62,22 @@ header img {
 
 #catList {
     list-style: none;
-    width: 70%;
-    margin: 0 auto;
-    background-color: azure;
+    padding: 0;
 }
 
 li {
-    padding: 10px 20px
+    font-size: 24px;
+    padding: 10px 20px 10px 50px
 }
 
 #selected {
     background-image: url("../images/cat_icon_selector.png");
     background-repeat: no-repeat;
-    background-position: -20px 50%;
+    background-position: 0px 50%;
+    color: brown;
 }
 
 li:hover {
-    background-color: brown;
+    background: #666;
     color: white;
 }
