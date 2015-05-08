@@ -1,3 +1,14 @@
+/* Paul Irish border box solution */
+
+html {
+  box-sizing: border-box;
+}
+*, *:before, *:after {
+  box-sizing: inherit;
+}
+
+
+
 body {
     margin: 0;
     padding: 0;
@@ -39,6 +50,7 @@ header img {
 
 #selectedCatSection {
     margin: 10px;
+    padding-left: 20px;
     width: 50%;
     float: left;
     background-color: beige;
@@ -56,6 +68,7 @@ header img {
 #catListSection {
     width: 40%;
     margin: 10px;
+    padding-left: 20px;
     float: left;
     background-color:beige;
 }
@@ -78,6 +91,6 @@ li {
 }
 
 li:hover {
-    background: #666;
+    background: #999;
     color: white;
 }
